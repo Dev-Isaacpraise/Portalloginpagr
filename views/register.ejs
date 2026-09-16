@@ -1,0 +1,137 @@
+<%- include('partials/header', { title: 'Applicant Registration' }) %>
+
+<div class="auth-wrapper">
+  <!-- University Branding -->
+  <div class="auth-header-strip">
+    <div class="institution-seal">FUL</div>
+    <div class="auth-header-text">
+      <h1>Federal University Lokoja</h1>
+      <p>Credential Verification & Academic Recruitment Portal</p>
+    </div>
+  </div>
+
+  <div class="auth-card auth-card-wide">
+    <div class="auth-step-pill">
+      <span>Candidate Onboarding</span> &bull; <span>Account Creation</span>
+    </div>
+
+    <h2 class="auth-card-title">Register Academic Candidate Account</h2>
+    <p class="auth-card-subtitle">Create your portal identity before configuring Two-Factor Authentication</p>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-danger" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div><%= error %></div>
+      </div>
+    <% } %>
+
+    <form action="/register" method="POST">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+        <div class="form-group">
+          <label for="full_name" class="form-label">Full Name & Title</label>
+          <input 
+            type="text" 
+            id="full_name" 
+            name="full_name" 
+            class="form-input" 
+            placeholder="Dr. John O. Doe" 
+            value="<%= (typeof formData !== 'undefined' && formData.full_name) || '' %>" 
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="username" class="form-label">Username</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            class="form-input" 
+            placeholder="johndoe26" 
+            value="<%= (typeof formData !== 'undefined' && formData.username) || '' %>" 
+            required
+          >
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: var(--space-4);">
+        <div class="form-group">
+          <label for="email" class="form-label">Academic / Institutional Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            class="form-input" 
+            placeholder="john.doe@university.edu.ng" 
+            value="<%= (typeof formData !== 'undefined' && formData.email) || '' %>" 
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="staff_id" class="form-label">Applicant / Reg Number</label>
+          <input 
+            type="text" 
+            id="staff_id" 
+            name="staff_id" 
+            class="form-input" 
+            placeholder="FUL/REC/2026/0991" 
+            value="<%= (typeof formData !== 'undefined' && formData.staff_id) || '' %>"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="department" class="form-label">Academic Department / Faculty</label>
+        <input 
+          type="text" 
+          id="department" 
+          name="department" 
+          class="form-input" 
+          placeholder="Department of Computer Science & Cybersecurity" 
+          value="<%= (typeof formData !== 'undefined' && formData.department) || '' %>"
+        >
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+        <div class="form-group">
+          <label for="password" class="form-label">Password (Min. 6 chars)</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-input" 
+            placeholder="••••••••••••" 
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword" class="form-label">Confirm Password</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            name="confirmPassword" 
+            class="form-input" 
+            placeholder="••••••••••••" 
+            required
+          >
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top: var(--space-2);">
+        Create Account & Configure Multi-Factor Authenticator &rarr;
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: var(--space-5); font-size: 13.5px; color: var(--color-text-secondary);">
+      Already have an applicant account? <a href="/login">Sign in with credentials</a>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

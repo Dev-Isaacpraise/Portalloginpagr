@@ -1,0 +1,221 @@
+<%- include('partials/header', { title: 'Student Clearance Portal & Academic Records' }) %>
+
+<!-- Top Institutional Navigation Bar -->
+<header class="portal-navbar">
+  <a href="/dashboard" class="portal-brand">
+    <div class="portal-brand-logo">FUL</div>
+    <div class="portal-brand-title">
+      <span class="university">Federal University Lokoja</span>
+      <span class="system-name">Student Clearance &amp; Credential Verification Portal</span>
+    </div>
+  </a>
+
+  <div class="portal-nav-user">
+    <div class="user-tag">
+      <span class="name"><%= user.fullName %></span>
+      <span class="role"><%= user.matricNo || user.username %> &bull; <%= user.level || '400 Level' %></span>
+    </div>
+    <a href="/logout" class="btn-nav-logout" id="btn-portal-logout" title="End Session Securely">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+      </svg>
+      <span>Sign Out</span>
+    </a>
+  </div>
+</header>
+
+<!-- Dashboard Main Content -->
+<main class="dashboard-main">
+  <!-- Success Notification on Initial MFA Activation -->
+  <% if (typeof mfaActivated !== 'undefined' && mfaActivated) { %>
+    <div class="alert alert-success" style="margin-bottom: var(--space-6);">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <div>
+        <strong>Two-Factor Authentication Confirmed:</strong> Your student portal account is now protected with RFC 6238 Time-based One-Time Password verification. All future logins will require your 6-digit authenticator code.
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Student Hero Profile Card -->
+  <section class="candidate-hero-card">
+    <div class="candidate-profile-left">
+      <div class="candidate-avatar">
+        <%= user.fullName.split(' ').map((n) => n[0]).filter((_, i) => i < 2).join('') %>
+      </div>
+      <div class="candidate-details">
+        <h2><%= user.fullName %></h2>
+        <div class="candidate-meta-badges">
+          <span class="meta-chip reg-num">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Matric: <%= user.matricNo || user.username %>
+          </span>
+          <span class="meta-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <%= user.department %> (<%= user.faculty || 'Faculty of Science' %>)
+          </span>
+          <span class="meta-chip" style="background-color: #EFF6FF; color: #1E40AF; border-color: #BFDBFE;">
+            Remita RRR: <%= user.rrrCode || 'QW23456H' %> (Cleared)
+          </span>
+          <span class="meta-chip mfa-active">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+            MFA Active (RFC 6238 TOTP Enforced)
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Demonstration Helper Actions -->
+    <div style="display: flex; gap: var(--space-2); align-items: center;">
+      <form action="/dashboard/reset-mfa" method="POST" onsubmit="return confirm('Reset MFA for this student account to re-demonstrate enrollment during defense?');">
+        <button type="submit" class="btn btn-outline btn-sm" title="Re-demonstrate MFA Enrollment">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+          <span>Re-enroll MFA (Demo)</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Two-Column Grid: Academic Records + Security Activity Audit -->
+  <div class="dashboard-grid">
+    <!-- Left Column: Verified Academic Records & Clearance Slips -->
+    <div class="portal-section-card">
+      <div class="section-header">
+        <h3 class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-primary-light);">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+          </svg>
+          <span>Academic Clearance Dossier &amp; Verified Records</span>
+        </h3>
+        <span class="badge-status badge-success">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <%= records.length %> Verified Records
+        </span>
+      </div>
+
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Qualification &amp; Major</th>
+              <th>Institution</th>
+              <th>Classification</th>
+              <th>Year</th>
+              <th>Verification Hash</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (records && records.length > 0) { %>
+              <% records.forEach(function(rec) { %>
+                <tr>
+                  <td>
+                    <div class="record-degree"><%= rec.qualification %></div>
+                  </td>
+                  <td><%= rec.institution %></td>
+                  <td><strong><%= rec.grade_or_class %></strong></td>
+                  <td><%= rec.completion_year %></td>
+                  <td>
+                    <span class="hash-snippet" title="<%= rec.credential_hash %>">
+                      <%= rec.credential_hash %>
+                    </span>
+                  </td>
+                </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: var(--space-6);">
+                  No credential records found.
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Thesis Academic Verification Callout -->
+      <div class="thesis-callout">
+        <strong>Academic Clearance Security (Thesis Presentation):</strong>
+        In university student portals, clearance records, course registrations, and Bursary Remita payments represent high-value institutional assets. Enforcing RFC 6238 TOTP ensures that even if a student's Matriculation Number and Remita Retrieval Reference (RRR) are intercepted or publicly viewed on printed receipts, attackers cannot access or falsify academic clearance records without possessing the physical authenticator device.
+      </div>
+    </div>
+
+    <!-- Right Column: Recent Login Activity & MFA Security Audit Log -->
+    <div class="portal-section-card">
+      <div class="section-header">
+        <h3 class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-primary-light);">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Security Audit &amp; Login Attempts</span>
+        </h3>
+        <span style="font-size: 11.5px; color: var(--color-text-muted);">Real-time DB Log</span>
+      </div>
+
+      <p style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: var(--space-4);">
+        Granular audit trail tracking institutional credential checks (Step 1) and two-factor TOTP validation (Step 2):
+      </p>
+
+      <div class="audit-list">
+        <% if (loginAttempts && loginAttempts.length > 0) { %>
+          <% loginAttempts.forEach(function(log) { %>
+            <div class="audit-item">
+              <div class="audit-left">
+                <span class="audit-type">
+                  <%= log.attempt_type === 'PASSWORD_STEP_1' ? '🎓 Step 1: Matric No & RRR' : '📱 Step 2: TOTP Code' %>
+                </span>
+                <span class="audit-meta">
+                  <span>IP: <%= log.ip_address %></span> &bull; 
+                  <span><%= new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) %></span>
+                </span>
+                <% if (log.failure_reason) { %>
+                  <span style="font-size: 11px; color: var(--color-danger); margin-top: 2px;">
+                    Cause: <%= log.failure_reason %>
+                  </span>
+                <% } %>
+              </div>
+              <div class="audit-right">
+                <% if (log.status === 'SUCCESS') { %>
+                  <span class="badge-status badge-success">Passed</span>
+                <% } else { %>
+                  <span class="badge-status badge-failed">Failed</span>
+                <% } %>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div style="text-align: center; color: var(--color-text-muted); padding: var(--space-4);">
+            No audit records yet.
+          </div>
+        <% } %>
+      </div>
+
+      <div style="margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--color-border-subtle); font-size: 12px; color: var(--color-text-muted);">
+        <strong>Brute-Force Rate Limiter:</strong> Enforces a 15-minute temporary IP lockout after 5 consecutive failed attempts, actively mitigating automated token guessing.
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

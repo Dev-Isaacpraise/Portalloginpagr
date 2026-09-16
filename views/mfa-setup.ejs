@@ -1,0 +1,119 @@
+<%- include('partials/header', { title: 'MFA Enrollment & Setup' }) %>
+
+<div class="auth-wrapper">
+  <!-- University Branding -->
+  <div class="auth-header-strip">
+    <div class="institution-seal">FUL</div>
+    <div class="auth-header-text">
+      <h1>Federal University Lokoja</h1>
+      <p>Student Academic Clearance & Credential Verification Portal</p>
+    </div>
+  </div>
+
+  <div class="auth-card auth-card-wide">
+    <div class="auth-step-pill">
+      <span>MFA Enrollment</span> &bull; <span>Time-based One-Time Password (TOTP)</span>
+    </div>
+
+    <h2 class="auth-card-title">Setup Multi-Factor Authentication</h2>
+    <p class="auth-card-subtitle">
+      Scan this QR code with Google Authenticator, Microsoft Authenticator, or 2FAS to link your student account.
+    </p>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-danger" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div><%= error %></div>
+      </div>
+    <% } %>
+
+    <!-- Step 1 of Setup: QR Code Display -->
+    <div style="text-align: center; margin-bottom: var(--space-4);">
+      <span style="font-size: 13px; font-weight: 600; color: var(--color-primary-navy);">
+        Step 1: Scan QR code with your mobile authenticator app
+      </span>
+      <div class="qr-card-box">
+        <img src="<%= qrCodeUrl %>" alt="TOTP Authenticator QR Code" id="mfa-qr-image" />
+        <span style="font-size: 11.5px; color: var(--color-text-muted); margin-top: 6px;">
+          Issuer: Federal University Lokoja (Student Portal) &bull; Matric No: <%= user.matricNo || user.username %>
+        </span>
+      </div>
+    </div>
+
+    <!-- Manual Secret Key Monospace Fallback -->
+    <div style="margin-bottom: var(--space-6);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <span style="font-size: 12.5px; font-weight: 600; color: var(--color-text-secondary);">
+          Cannot scan? Enter manual secret key:
+        </span>
+        <span style="font-size: 11px; color: var(--color-text-muted);">Base32 (RFC 3548)</span>
+      </div>
+      <div class="secret-key-wrapper">
+        <span class="secret-key-code" id="raw-secret-key"><%= rawSecret %></span>
+        <button type="button" class="copy-btn" id="btn-copy-secret" title="Copy Secret Key">
+          Copy
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Confirmation with 6-Digit Code -->
+    <form action="/mfa/confirm" method="POST" id="form-mfa-confirm">
+      <input type="hidden" name="secret" value="<%= rawSecret %>">
+      <input type="hidden" name="qrCodeUrl" value="<%= qrCodeUrl %>">
+      <input type="hidden" name="ticket" id="mfa-ticket" value="<%= typeof ticket !== 'undefined' ? ticket : '' %>">
+      <input type="hidden" name="code" id="hidden-otp-code" value="">
+
+      <div style="text-align: center;">
+        <label class="form-label" style="font-size: 13.5px; margin-bottom: var(--space-2);">
+          Step 2: Enter the 6-digit code shown in your authenticator app
+        </label>
+        
+        <!-- Spaced Digit Boxes -->
+        <div class="otp-container">
+          <div class="otp-digit-group">
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" autocomplete="one-time-code" />
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" />
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" />
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" />
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" />
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" />
+          </div>
+        </div>
+
+        <!-- 30-Second Refresh Timer Indicator -->
+        <div class="totp-timer-bar">
+          <div class="timer-circle">
+            <svg viewBox="0 0 24 24">
+              <circle class="timer-bg" cx="12" cy="12" r="9"></circle>
+              <circle class="timer-progress" id="totp-progress-circle" cx="12" cy="12" r="9"></circle>
+            </svg>
+          </div>
+          <span>TOTP Window: Code refreshes in <strong id="totp-countdown-seconds">30s</strong></span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top: var(--space-3);" id="btn-confirm-activate">
+        Confirm &amp; Activate Multi-Factor Authentication &rarr;
+      </button>
+    </form>
+
+    <!-- Presentation / Thesis Testing Helper -->
+    <div class="demo-helper-card" style="margin-top: var(--space-5);">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span><strong>💡 Thesis Evaluation Testing Helper:</strong></span>
+        <button type="button" class="btn btn-outline btn-sm" id="btn-fill-simulated-token">
+          Use Current Token (Test Helper)
+        </button>
+      </div>
+      <p style="margin-top: 6px; font-size: 11.5px; line-height: 1.5; color: var(--color-text-muted);">
+        For thesis examination without a smartphone, click the test helper above to calculate and insert the valid RFC 6238 token for this secret key, or use an online TOTP generator with the manual key.
+      </p>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
