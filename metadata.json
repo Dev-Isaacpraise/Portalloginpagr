@@ -1,0 +1,6 @@
+{
+  "name": "MFA Student Clearance Portal",
+  "description": "Federal University Lokoja student clearance and credential verification portal demonstrating Time-based One-Time Password (TOTP) Multi-Factor Authentication, institutional Matric No and Remita RRR validation, brute-force rate limiting, and login audit trails.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

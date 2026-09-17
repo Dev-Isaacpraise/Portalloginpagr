@@ -1,0 +1,134 @@
+<%- include('partials/header', { title: 'Student Sign In (Step 1)' }) %>
+
+<div class="auth-wrapper">
+  <!-- University Branding -->
+  <div class="auth-header-strip">
+    <div class="institution-seal">FUL</div>
+    <div class="auth-header-text">
+      <h1>Federal University Lokoja</h1>
+      <p>Student Academic Clearance & Credential Verification Portal</p>
+    </div>
+  </div>
+
+  <!-- Centered Login Card -->
+  <div class="auth-card">
+    <div class="auth-step-pill">
+      <span>Step 1 of 2</span> &bull; <span>Primary Authentication</span>
+    </div>
+
+    <h2 class="auth-card-title">Student Portal Sign In</h2>
+    <p class="auth-card-subtitle">Authenticate using your Matriculation Number and Remita RRR clearance code</p>
+
+    <!-- Feedback Alerts -->
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-danger" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div><%= error %></div>
+      </div>
+    <% } %>
+
+    <% if (typeof notice !== 'undefined' && notice) { %>
+      <div class="alert alert-warning" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="12" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <div><%= notice %></div>
+      </div>
+    <% } %>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="alert alert-success" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <div><%= success %></div>
+      </div>
+    <% } %>
+
+    <!-- Step 1 Form: Matric No & Remita RRR -->
+    <form action="/login" method="POST" autocomplete="on">
+      <div class="form-group">
+        <label for="matricNo" class="form-label">Matriculation Number (Matric No)</label>
+        <input 
+          type="text" 
+          id="matricNo" 
+          name="matricNo" 
+          class="form-input" 
+          placeholder="e.g. SCI22CSC073" 
+          value="<%= typeof matricNo !== 'undefined' && matricNo ? matricNo : (typeof username !== 'undefined' ? username : '') %>" 
+          required 
+          autofocus
+          style="text-transform: uppercase;"
+          oninput="this.value = this.value.toUpperCase()"
+        >
+      </div>
+
+      <div class="form-group">
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+          <label for="rrr" class="form-label">Remita Retrieval Reference (RRR)</label>
+          <span style="font-size: 11px; color: var(--color-text-muted);">Payment / Clearance Ref</span>
+        </div>
+        <input 
+          type="password" 
+          id="rrr" 
+          name="rrr" 
+          class="form-input" 
+          placeholder="e.g. QW23456H" 
+          required
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="btn-login-submit">
+        Authenticate &amp; Proceed to Step 2 (TOTP) &rarr;
+      </button>
+    </form>
+
+    <!-- Institutional Clearance Notice -->
+    <div style="text-align: center; margin-top: var(--space-4); font-size: 12.5px; color: var(--color-text-secondary); line-height: 1.45; background-color: var(--color-bg-subtle); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--color-border-subtle);">
+      <strong>Institutional Notice:</strong> Student portal accounts are automatically pre-provisioned upon admission clearance and bursary payment. Self-registration is restricted.
+    </div>
+
+    <!-- Thesis MFA Reinforcement Badge -->
+    <div class="mfa-security-badge" style="margin-top: var(--space-4);">
+      <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <path d="m9 12 2 2 4-4"></path>
+      </svg>
+      <span>Secured with Multi-Factor Authentication (RFC 6238 TOTP)</span>
+    </div>
+
+    <!-- Demo Accounts Quick Reference (For Defense Reviewers) -->
+    <div class="demo-helper-card" style="margin-top: var(--space-4);">
+      <div style="font-weight: 600; margin-bottom: 8px; display:flex; justify-content:space-between; align-items:center;">
+        <span>🎓 University Database Credentials:</span>
+        <div style="display:flex; gap: 6px;">
+          <button type="button" class="btn btn-outline btn-sm" id="btn-autofill-demo" onclick="document.getElementById('matricNo').value='SCI22CSC073'; document.getElementById('rrr').value='QW23456H';">
+            Autofill Praise
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" id="btn-autofill-demo-2" onclick="document.getElementById('matricNo').value='SCI22CSC099'; document.getElementById('rrr').value='RM884920K';">
+            Autofill Adeola
+          </button>
+        </div>
+      </div>
+      <div class="demo-credentials-row">
+        <span>Matric: <strong style="color: var(--color-primary);">SCI22CSC073</strong></span>
+        <span>RRR: <strong>QW23456H</strong></span>
+        <span class="badge-status badge-success" style="font-size: 10px;">MFA Active</span>
+      </div>
+      <div class="demo-credentials-row" style="margin-top: 4px;">
+        <span>Matric: <strong style="color: var(--color-text-primary);">SCI22CSC099</strong></span>
+        <span>RRR: <strong>RM884920K</strong></span>
+        <span class="badge-status" style="font-size: 10px; background-color: #FEF3C7; color: #92400E;">MFA Setup</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
